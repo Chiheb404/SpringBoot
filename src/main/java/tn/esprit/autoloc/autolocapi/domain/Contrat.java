@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,4 +25,12 @@ public class Contrat {
     private int montantTotal;
     @Column(nullable = false)
     private boolean valide;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Reservation reservation;
+
+    @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Paiement> paiements = new ArrayList<>();
+
 }

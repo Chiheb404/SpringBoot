@@ -1,16 +1,15 @@
 package tn.esprit.autoloc.autolocapi.domain;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="Client")
@@ -36,5 +35,9 @@ public class Client {
     private String numPermis;
     @Column(nullable = false, length = 50)
     private Date dateInscription;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<Reservation> reservations = new ArrayList<>();
+
 
 }

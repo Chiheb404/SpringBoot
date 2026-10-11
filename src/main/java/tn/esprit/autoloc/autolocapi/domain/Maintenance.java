@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,4 +24,7 @@ public class Maintenance {
     private Date dateFin;
     @Column(nullable = false)
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Vehicule vehicule;
 }
