@@ -1,11 +1,9 @@
 package tn.esprit.autoloc.autolocapi.domain;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +42,6 @@ public class Vehicule {
     private List<Maintenance> maintenances = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "vehicule_equipement")
     private Set<Equipement> equipements = new HashSet<>();
 
 }
