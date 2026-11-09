@@ -5,13 +5,34 @@ import java.util.List;
 import tn.esprit.autoloc.autolocapi.domain.Maintenance;
 
 public interface IMaintenanceService {
-    Maintenance create(Maintenance maintenance);
 
-    Maintenance findById(Long id);
+    Maintenance getById(Long id);
 
-    List<Maintenance> findAll();
+    List<Maintenance> getAll();
 
-    Maintenance update(Long id, Maintenance maintenance);
+    Maintenance add(Maintenance maintenance, Long idVehicule);
 
-    void deleteById(Long id);
+    Maintenance update(Long id, Maintenance maintenance, Long idVehicule);
+
+    void delete(Long id);
+
+    default Maintenance findById(Long id) {
+        return getById(id);
+    }
+
+    default List<Maintenance> findAll() {
+        return getAll();
+    }
+
+    default Maintenance create(Maintenance maintenance) {
+        return add(maintenance, null);
+    }
+
+    default Maintenance update(Long id, Maintenance maintenance) {
+        return update(id, maintenance, null);
+    }
+
+    default void deleteById(Long id) {
+        delete(id);
+    }
 }

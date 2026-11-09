@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import tn.esprit.autoloc.autolocapi.domain.Employe;
+import tn.esprit.autoloc.autolocapi.mapper.EmployeMapper;
 import tn.esprit.autoloc.autolocapi.service.IEmployeService;
+import tn.esprit.autoloc.autolocapi.web.dto.EmployeDTO;
 
 import java.util.List;
 
@@ -27,20 +29,21 @@ import java.util.List;
 public class EmployeController {
 
     private final IEmployeService employeService;
+    private final EmployeMapper employeMapper;
 
     @Operation(summary = "Lister les employés")
     @ApiResponse(responseCode = "200", description = "Liste retournée")
     @GetMapping
-    public List<Employe> findAll() {
-        return employeService.findAll();
+    public List<EmployeDTO> findAll() {
+        return employeMapper.toDtoList(employeService.getAll());
     }
 
     @Operation(summary = "Consulter un employé")
     @ApiResponse(responseCode = "200", description = "Employé trouvé")
     @ApiResponse(responseCode = "404", description = "Employé introuvable")
     @GetMapping("/{id}")
-    public Employe findById(@Parameter(description = "Identifiant") @PathVariable Long id) {
-        return employeService.findById(id);
+    public EmployeDTO findById(@Parameter(description = "Identifiant") @PathVariable Long id) {
+        return employeMapper.toDto(employeService.getById(id));
     }
 
     @Operation(summary = "Créer un employé")
@@ -48,8 +51,9 @@ public class EmployeController {
     @ApiResponse(responseCode = "400", description = "Données invalides")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Employe create(@RequestBody Employe employe) {
-        return employeService.create(employe);
+    public EmployeDTO create(@Valid @RequestBody EmployeDTO dto) {
+        return employeMapper.toDto(
+                employeService.add(employeMapper.toEntity(dto), dto.getIdAgence()));
     }
 
     @Operation(summary = "Modifier un employé")
@@ -57,9 +61,10 @@ public class EmployeController {
     @ApiResponse(responseCode = "404", description = "Employé introuvable")
     @ApiResponse(responseCode = "400", description = "Données invalides")
     @PutMapping("/{id}")
-    public Employe update(@Parameter(description = "Identifiant") @PathVariable Long id,
-                          @RequestBody Employe employe) {
-        return employeService.update(id, employe);
+    public EmployeDTO update(@Parameter(description = "Identifiant") @PathVariable Long id,
+                             @Valid @RequestBody EmployeDTO dto) {
+        return employeMapper.toDto(
+                employeService.update(id, employeMapper.toEntity(dto), dto.getIdAgence()));
     }
 
     @Operation(summary = "Supprimer un employé")
@@ -68,6 +73,6 @@ public class EmployeController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
-        employeService.deleteById(id);
+        employeService.delete(id);
     }
 }

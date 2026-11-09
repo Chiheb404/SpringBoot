@@ -29,8 +29,12 @@ public class AgenceServiceImpl implements IAgenceService {
 
     @Override
     public Agence update(Long id, Agence agence) {
-        agence.setIdAgence(id);
-        return agenceRepository.save(agence);
+        Agence existante = findById(id);
+        existante.setNom(agence.getNom());
+        existante.setVille(agence.getVille());
+        existante.setAdresse(agence.getAdresse());
+        existante.setTelephone(agence.getTelephone());
+        return agenceRepository.save(existante);
     }
 
     @Override

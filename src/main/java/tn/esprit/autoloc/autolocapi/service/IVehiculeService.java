@@ -10,9 +10,15 @@ public interface IVehiculeService {
 
     List<Vehicule> getAll();
 
-    boolean update(Long id, Vehicule vehicule);
+    Vehicule update(Long id, Vehicule vehicule, Long idAgence);
 
-    boolean delete(Long id);
+    void delete(Long id);
 
-    Vehicule add(Vehicule vehicule);
+    Vehicule add(Vehicule vehicule, Long idAgence);
+
+    Vehicule affecterAAgence(Long idVehicule, Long idAgence);
+
+    Vehicule affecterEquipement(Long idVehicule, Long idEquipement);
+
+    Vehicule desaffecterEquipement(Long idVehicule, Long idEquipement);
 }

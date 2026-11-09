@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -20,7 +21,7 @@ public class Paiement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPaiement;
     @Column(nullable = false)
-    private Number montant;
+    private BigDecimal montant;
     @Column(nullable = false)
     private Date datePaiement;
     @Enumerated(EnumType.STRING)

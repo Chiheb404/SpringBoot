@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Client {
     @Id
-    @Column(nullable = false, length = 50)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idClient;
     @Column(nullable = false, length = 50)
     private String nom;
@@ -33,7 +33,7 @@ public class Client {
     private String telephone;
     @Column(nullable = false, length = 50)
     private String numPermis;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private Date dateInscription;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
