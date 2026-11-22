@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import tn.esprit.autoloc.autolocapi.domain.Vehicule;
 import tn.esprit.autoloc.autolocapi.mapper.VehiculeMapper;
 import tn.esprit.autoloc.autolocapi.service.IVehiculeService;
 import tn.esprit.autoloc.autolocapi.web.dto.VehiculeDTO;
@@ -105,5 +104,21 @@ public class VehiculeController {
             @Parameter(description = "Identifiant du véhicule") @PathVariable @Positive Long idVehicule,
             @Parameter(description = "Identifiant de l'équipement") @PathVariable @Positive Long idEquipement) {
         return vehiculeMapper.toDto(vehiculeService.desaffecterEquipement(idVehicule, idEquipement));
+    }
+
+    @Operation(summary = "Afficher la liste des véhicules par identifiant de contrat")
+    @ApiResponse(responseCode = "200", description = "Liste des véhicules retournée")
+    @GetMapping("/contrat/{idContrat}")
+    public List<VehiculeDTO> getVehiculesParIdContrat(
+            @Parameter(description = "Identifiant du contrat") @PathVariable Long idContrat) {
+        return vehiculeMapper.toDtoList(vehiculeService.afficherVehiculesParIdContrat(idContrat));
+    }
+
+    @Operation(summary = "Afficher la liste des véhicules par identifiant de maintenance")
+    @ApiResponse(responseCode = "200", description = "Liste des véhicules retournée")
+    @GetMapping("/maintenance/{idMaintenance}")
+    public List<VehiculeDTO> getVehiculesParIdMaintenance(
+            @Parameter(description = "Identifiant de la maintenance") @PathVariable Long idMaintenance) {
+        return vehiculeMapper.toDtoList(vehiculeService.afficherVehiculesParIdMaintenance(idMaintenance));
     }
 }

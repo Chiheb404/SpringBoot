@@ -48,7 +48,7 @@ public class MaintenanceController {
 
     @Operation(summary = "Créer une maintenance")
     @ApiResponse(responseCode = "201", description = "Maintenance créée")
-    @ApiResponse(responseCode = "400", description = "Données invalides (coût négatif, date de fin antérieure)")
+    @ApiResponse(responseCode = "400", description = "Données invalides (date de fin antérieure à la date de début)")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MaintenanceDTO create(@Valid @RequestBody MaintenanceDTO dto) {
@@ -74,5 +74,13 @@ public class MaintenanceController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         maintenanceService.delete(id);
+    }
+
+    @Operation(summary = "Afficher la liste des maintenances par identifiant de véhicule")
+    @ApiResponse(responseCode = "200", description = "Liste des maintenances retournée")
+    @GetMapping("/vehicule/{idVehicule}")
+    public List<MaintenanceDTO> getMaintenancesParIdVehicule(
+            @Parameter(description = "Identifiant du véhicule") @PathVariable Long idVehicule) {
+        return maintenanceMapper.toDtoList(maintenanceService.afficherMaintenancesParIdVehicule(idVehicule));
     }
 }

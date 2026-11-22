@@ -3,6 +3,7 @@ package tn.esprit.autoloc.autolocapi.service;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.autoloc.autolocapi.domain.Maintenance;
@@ -11,6 +12,7 @@ import tn.esprit.autoloc.autolocapi.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.autolocapi.repository.IMaintenanceRepository;
 import tn.esprit.autoloc.autolocapi.repository.IVehiculeRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MaintenanceServiceImpl implements IMaintenanceService {
@@ -71,5 +73,14 @@ public class MaintenanceServiceImpl implements IMaintenanceService {
         }
         return vehiculeRepository.findById(idVehicule)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicule", idVehicule));
+    }
+
+    @Override
+    public List<Maintenance> afficherMaintenancesParIdVehicule(Long idVehicule) {
+        List<Maintenance> maintenances = maintenanceRepository.findByVehicule_IdVehicule(idVehicule);
+        log.info("=== Liste des Maintenances pour le Véhicule {} ===", idVehicule);
+        maintenances.forEach(m -> log.info("Maintenance: id={}, description={}, dateDebut={}, dateFin={}",
+                m.getIdMaintenance(), m.getDescription(), m.getDateDebut(), m.getDateFin()));
+        return maintenances;
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.autoloc.autolocapi.domain.Contrat;
@@ -12,6 +13,7 @@ import tn.esprit.autoloc.autolocapi.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.autolocapi.repository.IContratRepository;
 import tn.esprit.autoloc.autolocapi.repository.IReservationRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ContratServiceImpl implements IContratService {
@@ -79,5 +81,14 @@ public class ContratServiceImpl implements IContratService {
             throw new ResourceNotFoundException("Contrat", id);
         }
         contratRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Contrat> afficherContratsParIdVehicule(Long idVehicule) {
+        List<Contrat> contrats = contratRepository.findByReservation_Vehicule_IdVehicule(idVehicule);
+        log.info("=== Liste des Contrats pour le Véhicule {} ===", idVehicule);
+        contrats.forEach(c -> log.info("Contrat: id={}, dateSignature={}, montantTotal={}, valide={}",
+                c.getIdContrat(), c.getDateSignature(), c.getMontantTotal(), c.isValide()));
+        return contrats;
     }
 }

@@ -16,19 +16,5 @@ public interface IContratService {
 
     void delete(Long id);
 
-    default Contrat findById(Long id) {
-        return getById(id);
-    }
-
-    default List<Contrat> findAll() {
-        return getAll();
-    }
-
-    default Contrat create(Contrat contrat) {
-        return add(contrat, null);
-    }
-
-    default void deleteById(Long id) {
-        delete(id);
-    }
+    List<Contrat> afficherContratsParIdVehicule(Long idVehicule);
 }

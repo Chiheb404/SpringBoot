@@ -16,23 +16,5 @@ public interface IMaintenanceService {
 
     void delete(Long id);
 
-    default Maintenance findById(Long id) {
-        return getById(id);
-    }
-
-    default List<Maintenance> findAll() {
-        return getAll();
-    }
-
-    default Maintenance create(Maintenance maintenance) {
-        return add(maintenance, null);
-    }
-
-    default Maintenance update(Long id, Maintenance maintenance) {
-        return update(id, maintenance, null);
-    }
-
-    default void deleteById(Long id) {
-        delete(id);
-    }
+    List<Maintenance> afficherMaintenancesParIdVehicule(Long idVehicule);
 }

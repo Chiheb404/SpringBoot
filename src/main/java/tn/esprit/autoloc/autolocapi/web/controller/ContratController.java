@@ -75,4 +75,12 @@ public class ContratController {
     public void deleteById(@Parameter(description = "Identifiant") @PathVariable Long id) {
         contratService.delete(id);
     }
+
+    @Operation(summary = "Afficher la liste des contrats par identifiant de véhicule")
+    @ApiResponse(responseCode = "200", description = "Liste des contrats retournée")
+    @GetMapping("/vehicule/{idVehicule}")
+    public List<ContratDTO> getContratsParIdVehicule(
+            @Parameter(description = "Identifiant du véhicule") @PathVariable Long idVehicule) {
+        return contratMapper.toDtoList(contratService.afficherContratsParIdVehicule(idVehicule));
+    }
 }

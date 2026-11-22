@@ -41,6 +41,9 @@ public class Vehicule {
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Maintenance> maintenances = new ArrayList<>();
 
+    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<Reservation> reservations = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Equipement> equipements = new HashSet<>();
 

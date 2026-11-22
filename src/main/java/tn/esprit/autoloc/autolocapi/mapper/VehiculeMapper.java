@@ -20,5 +20,6 @@ public interface VehiculeMapper {
     @Mapping(target = "agence", ignore = true)
     @Mapping(target = "maintenances", ignore = true)
     @Mapping(target = "equipements", ignore = true)
+    @Mapping(target = "reservations", ignore = true)
     Vehicule toEntity(VehiculeDTO dto);
 }

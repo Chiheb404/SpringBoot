@@ -21,4 +21,8 @@ public interface IVehiculeService {
     Vehicule affecterEquipement(Long idVehicule, Long idEquipement);
 
     Vehicule desaffecterEquipement(Long idVehicule, Long idEquipement);
+
+    List<Vehicule> afficherVehiculesParIdContrat(Long idContrat);
+
+    List<Vehicule> afficherVehiculesParIdMaintenance(Long idMaintenance);
 }

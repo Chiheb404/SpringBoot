@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -61,6 +62,10 @@ class ControllerTests {
     private IEquipementService equipementService;
     private final EquipementMapper equipementMapper = Mappers.getMapper(EquipementMapper.class);
 
+    @Mock
+    private IVehiculeService vehiculeService;
+    private final VehiculeMapper vehiculeMapper = Mappers.getMapper(VehiculeMapper.class);
+
     private MockMvc mockMvcClient;
     private MockMvc mockMvcEmploye;
     private MockMvc mockMvcReservation;
@@ -68,9 +73,13 @@ class ControllerTests {
     private MockMvc mockMvcPaiement;
     private MockMvc mockMvcMaintenance;
     private MockMvc mockMvcEquipement;
+    private MockMvc mockMvcVehicule;
 
     @BeforeEach
     void setUp() {
+        mockMvcVehicule = MockMvcBuilders.standaloneSetup(new VehiculeController(vehiculeService, vehiculeMapper))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         mockMvcClient = MockMvcBuilders.standaloneSetup(new ClientController(clientService, clientMapper))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -239,6 +248,76 @@ class ControllerTests {
 
         mockMvcEquipement.perform(put("/equipements/1/vehicules/2"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testGetVehiculesParIdContrat() throws Exception {
+        Vehicule v = new Vehicule();
+        v.setIdVehicule(1L);
+        v.setImmatriculation("200-TN-1234");
+        v.setMarque("Peugeot");
+        v.setModele("208");
+        v.setCategorie(CategorieVehicule.CITADINE);
+        v.setTarifJournalier(new BigDecimal("90.00"));
+        v.setStatut(StatutVehicule.DISPONIBLE);
+
+        when(vehiculeService.afficherVehiculesParIdContrat(10L)).thenReturn(List.of(v));
+
+        mockMvcVehicule.perform(get("/vehicules/contrat/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].idVehicule").value(1L))
+                .andExpect(jsonPath("$[0].immatriculation").value("200-TN-1234"));
+    }
+
+    @Test
+    void testGetVehiculesParIdMaintenance() throws Exception {
+        Vehicule v = new Vehicule();
+        v.setIdVehicule(2L);
+        v.setImmatriculation("150-TN-5678");
+        v.setMarque("Renault");
+        v.setModele("Clio");
+        v.setCategorie(CategorieVehicule.CITADINE);
+        v.setTarifJournalier(new BigDecimal("80.00"));
+        v.setStatut(StatutVehicule.DISPONIBLE);
+
+        when(vehiculeService.afficherVehiculesParIdMaintenance(5L)).thenReturn(List.of(v));
+
+        mockMvcVehicule.perform(get("/vehicules/maintenance/5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].idVehicule").value(2L))
+                .andExpect(jsonPath("$[0].immatriculation").value("150-TN-5678"));
+    }
+
+    @Test
+    void testGetContratsParIdVehicule() throws Exception {
+        Contrat c = new Contrat();
+        c.setIdContrat(15L);
+        c.setDateSignature(new Date());
+        c.setMontantTotal(450);
+        c.setValide(true);
+
+        when(contratService.afficherContratsParIdVehicule(1L)).thenReturn(List.of(c));
+
+        mockMvcContrat.perform(get("/contrats/vehicule/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].idContrat").value(15L))
+                .andExpect(jsonPath("$[0].montantTotal").value(450));
+    }
+
+    @Test
+    void testGetMaintenancesParIdVehicule() throws Exception {
+        Maintenance m = new Maintenance();
+        m.setIdMaintenance(25L);
+        m.setDateDebut(new Date());
+        m.setDateFin(new Date());
+        m.setDescription("Revision generale");
+
+        when(maintenanceService.afficherMaintenancesParIdVehicule(1L)).thenReturn(List.of(m));
+
+        mockMvcMaintenance.perform(get("/maintenances/vehicule/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].idMaintenance").value(25L))
+                .andExpect(jsonPath("$[0].description").value("Revision generale"));
     }
 }
 

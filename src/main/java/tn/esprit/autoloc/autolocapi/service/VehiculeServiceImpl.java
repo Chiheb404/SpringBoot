@@ -3,6 +3,7 @@ package tn.esprit.autoloc.autolocapi.service;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import tn.esprit.autoloc.autolocapi.repository.IAgenceRepository;
 import tn.esprit.autoloc.autolocapi.repository.IEquipementRepository;
 import tn.esprit.autoloc.autolocapi.repository.IVehiculeRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VehiculeServiceImpl implements IVehiculeService {
@@ -102,11 +104,21 @@ public class VehiculeServiceImpl implements IVehiculeService {
         return vehiculeRepository.save(vehicule);
     }
 
-    private void verifierTarif(Vehicule vehicule) {
-        if (vehicule.getTarifJournalier() != null
-                && vehicule.getTarifJournalier().signum() < 0) {
-            throw new IllegalArgumentException(
-                    "Le tarif journalier ne peut pas être négatif");
-        }
+    @Override
+    public List<Vehicule> afficherVehiculesParIdContrat(Long idContrat) {
+        List<Vehicule> vehicules = vehiculeRepository.findByReservations_Contrat_IdContrat(idContrat);
+        log.info("=== Liste des Véhicules pour le Contrat {} ===", idContrat);
+        vehicules.forEach(v -> log.info("Vehicule: id={}, immatriculation={}, marque={}, modele={}",
+                v.getIdVehicule(), v.getImmatriculation(), v.getMarque(), v.getModele()));
+        return vehicules;
+    }
+
+    @Override
+    public List<Vehicule> afficherVehiculesParIdMaintenance(Long idMaintenance) {
+        List<Vehicule> vehicules = vehiculeRepository.findByMaintenances_IdMaintenance(idMaintenance);
+        log.info("=== Liste des Véhicules pour la Maintenance {} ===", idMaintenance);
+        vehicules.forEach(v -> log.info("Vehicule: id={}, immatriculation={}, marque={}, modele={}",
+                v.getIdVehicule(), v.getImmatriculation(), v.getMarque(), v.getModele()));
+        return vehicules;
     }
 }

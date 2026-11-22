@@ -1,3 +1,4 @@
+
 package tn.esprit.autoloc.autolocapi;
 
 import org.junit.jupiter.api.Test;
@@ -5,13 +6,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import tn.esprit.autoloc.autolocapi.domain.*;
 import tn.esprit.autoloc.autolocapi.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.autolocapi.repository.*;
 import tn.esprit.autoloc.autolocapi.service.*;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,22 +27,28 @@ class ServiceTests {
 
     @Mock
     private IClientRepository clientRepository;
+
     @InjectMocks
     private ClientServiceImpl clientService;
 
     @Mock
     private IEmployeRepository employeRepository;
+
     @Mock
     private IAgenceRepository agenceRepository;
+
     @InjectMocks
     private EmployeServiceImpl employeService;
 
     @Mock
     private IReservationRepository reservationRepository;
+
     @Mock
     private IVehiculeRepository vehiculeRepository;
+
     @Mock
     private IContratRepository contratRepository;
+
     @InjectMocks
     private ReservationServiceImpl reservationService;
 
@@ -46,18 +57,25 @@ class ServiceTests {
 
     @Mock
     private IPaiementRepository paiementRepository;
+
     @InjectMocks
     private PaiementServiceImpl paiementService;
 
     @Mock
     private IMaintenanceRepository maintenanceRepository;
+
     @InjectMocks
     private MaintenanceServiceImpl maintenanceService;
 
     @Mock
     private IEquipementRepository equipementRepository;
+
     @InjectMocks
     private EquipementServiceImpl equipementService;
+
+    @InjectMocks
+    private VehiculeServiceImpl vehiculeService;
+
 
     @Test
     void testClientService_AddAndGetById() {
@@ -67,7 +85,7 @@ class ServiceTests {
 
         when(clientRepository.save(any(Client.class))).thenAnswer(i -> {
             Client c = i.getArgument(0);
-            assertNull(c.getIdClient()); // ID was reset to null
+            assertNull(c.getIdClient());
             c.setIdClient(1L);
             return c;
         });
@@ -80,8 +98,12 @@ class ServiceTests {
         assertEquals("Ali", found.getNom());
 
         when(clientRepository.findById(2L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> clientService.getById(2L));
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> clientService.getById(2L)
+        );
     }
+
 
     @Test
     void testEmployeService_AddWithAgence() {
@@ -89,6 +111,7 @@ class ServiceTests {
         agence.setIdAgence(10L);
 
         when(agenceRepository.findById(10L)).thenReturn(Optional.of(agence));
+
         when(employeRepository.save(any(Employe.class))).thenAnswer(i -> {
             Employe e = i.getArgument(0);
             e.setIdEmploye(1L);
@@ -103,8 +126,15 @@ class ServiceTests {
         assertEquals(10L, saved.getAgence().getIdAgence());
 
         when(agenceRepository.findById(999L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> employeService.add(new Employe(), 999L));
+
+        Employe invalidEmploye = new Employe();
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> employeService.add(invalidEmploye, 999L)
+        );
     }
+
 
     @Test
     void testReservationService_VehiculeNonDisponibleThrowsException() {
@@ -122,20 +152,33 @@ class ServiceTests {
         reservation.setDateDebut(new Date(1000000));
         reservation.setDateFin(new Date(2000000));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> reservationService.add(reservation, 1L, 1L, null));
+        Long clientId = 1L;
+        Long vehiculeId = 1L;
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> reservationService.add(reservation, clientId, vehiculeId, null)
+        );
+
         assertTrue(ex.getMessage().contains("disponible"));
     }
+
 
     @Test
     void testReservationService_DateInvalideThrowsException() {
         Reservation reservation = new Reservation();
         reservation.setDateDebut(new Date(2000000));
-        reservation.setDateFin(new Date(1000000)); // fin before debut
+        reservation.setDateFin(new Date(1000000));
 
-        assertThrows(IllegalArgumentException.class,
-                () -> reservationService.add(reservation, 1L, 1L, null));
+        Long clientId = 1L;
+        Long vehiculeId = 1L;
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> reservationService.add(reservation, clientId, vehiculeId, null)
+        );
     }
+
 
     @Test
     void testContratService_CalculeMontantTotal() {
@@ -145,33 +188,49 @@ class ServiceTests {
         Reservation res = new Reservation();
         res.setIdReservation(1L);
         res.setVehicule(vehicule);
+
         long now = System.currentTimeMillis();
         res.setDateDebut(new Date(now));
-        res.setDateFin(new Date(now + 3 * 24 * 60 * 60 * 1000L)); // 3 days
+        res.setDateFin(new Date(now + 3 * 24 * 60 * 60 * 1000L));
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(res));
-        when(contratRepository.save(any(Contrat.class))).thenAnswer(i -> i.getArgument(0));
+        when(contratRepository.save(any(Contrat.class)))
+                .thenAnswer(i -> i.getArgument(0));
 
         Contrat contrat = new Contrat();
-        contrat.setMontantTotal(0); // auto-calculate
+        contrat.setMontantTotal(0);
 
         Contrat saved = contratService.add(contrat, 1L);
         assertEquals(300, saved.getMontantTotal());
     }
 
+
     @Test
     void testPaiementService_AddThrowsWhenContratMissing() {
         when(contratRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Paiement p = new Paiement();
-        assertThrows(ResourceNotFoundException.class, () -> paiementService.add(p, 99L));
+        Paiement paiement = new Paiement();
+        Long contratId = 99L;
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> paiementService.add(paiement, contratId)
+        );
     }
+
 
     @Test
     void testMaintenanceService_DeleteNotFound() {
         when(maintenanceRepository.existsById(99L)).thenReturn(false);
-        assertThrows(ResourceNotFoundException.class, () -> maintenanceService.delete(99L));
+
+        Long maintenanceId = 99L;
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> maintenanceService.delete(maintenanceId)
+        );
     }
+
 
     @Test
     void testEquipementService_AffecterEtDesaffecterVehicule() {
@@ -192,5 +251,60 @@ class ServiceTests {
         equipementService.desaffecterVehicule(5L, 10L);
         assertFalse(v.getEquipements().contains(eq));
     }
-}
 
+    @Test
+    void testAfficherVehiculesParIdContrat() {
+        Vehicule v = new Vehicule();
+        v.setIdVehicule(1L);
+        v.setImmatriculation("123-TN-456");
+
+        when(vehiculeRepository.findByReservations_Contrat_IdContrat(10L))
+                .thenReturn(List.of(v));
+
+        List<Vehicule> result = vehiculeService.afficherVehiculesParIdContrat(10L);
+        assertEquals(1, result.size());
+        assertEquals("123-TN-456", result.get(0).getImmatriculation());
+    }
+
+    @Test
+    void testAfficherContratsParIdVehicule() {
+        Contrat c = new Contrat();
+        c.setIdContrat(20L);
+        c.setMontantTotal(500);
+
+        when(contratRepository.findByReservation_Vehicule_IdVehicule(1L))
+                .thenReturn(List.of(c));
+
+        List<Contrat> result = contratService.afficherContratsParIdVehicule(1L);
+        assertEquals(1, result.size());
+        assertEquals(500, result.get(0).getMontantTotal());
+    }
+
+    @Test
+    void testAfficherMaintenancesParIdVehicule() {
+        Maintenance m = new Maintenance();
+        m.setIdMaintenance(30L);
+        m.setDescription("Changement plaquettes");
+
+        when(maintenanceRepository.findByVehicule_IdVehicule(1L))
+                .thenReturn(List.of(m));
+
+        List<Maintenance> result = maintenanceService.afficherMaintenancesParIdVehicule(1L);
+        assertEquals(1, result.size());
+        assertEquals("Changement plaquettes", result.get(0).getDescription());
+    }
+
+    @Test
+    void testAfficherVehiculesParIdMaintenance() {
+        Vehicule v = new Vehicule();
+        v.setIdVehicule(1L);
+        v.setMarque("Renault");
+
+        when(vehiculeRepository.findByMaintenances_IdMaintenance(30L))
+                .thenReturn(List.of(v));
+
+        List<Vehicule> result = vehiculeService.afficherVehiculesParIdMaintenance(30L);
+        assertEquals(1, result.size());
+        assertEquals("Renault", result.get(0).getMarque());
+    }
+}
