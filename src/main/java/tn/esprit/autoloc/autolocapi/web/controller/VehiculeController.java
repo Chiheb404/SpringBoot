@@ -121,4 +121,22 @@ public class VehiculeController {
             @Parameter(description = "Identifiant de la maintenance") @PathVariable Long idMaintenance) {
         return vehiculeMapper.toDtoList(vehiculeService.afficherVehiculesParIdMaintenance(idMaintenance));
     }
+
+    @Operation(summary = "Véhicules par identifiant de maintenance (JPQL)")
+    @ApiResponse(responseCode = "200", description = "Liste des véhicules retournée")
+    @GetMapping("/maintenance/{idMaintenance}/jpql")
+    public List<VehiculeDTO> getVehiculesParIdMaintenanceJPQL(
+            @Parameter(description = "Identifiant de la maintenance") @PathVariable Long idMaintenance) {
+        return vehiculeMapper.toDtoList(vehiculeService.afficherVehiculesParIdMaintenanceJPQL(idMaintenance));
+    }
+
+    @Operation(summary = "Véhicules par identifiant de maintenance (SQL natif)")
+    @ApiResponse(responseCode = "200", description = "Liste des véhicules retournée")
+    @GetMapping("/maintenance/{idMaintenance}/sql")
+    public List<VehiculeDTO> getVehiculesParIdMaintenanceSQL(
+            @Parameter(description = "Identifiant de la maintenance") @PathVariable Long idMaintenance) {
+        return vehiculeMapper.toDtoList(vehiculeService.afficherVehiculesParIdMaintenanceSQL(idMaintenance));
+    }
+
+
 }

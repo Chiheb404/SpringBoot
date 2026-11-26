@@ -17,4 +17,7 @@ public interface IMaintenanceService {
     void delete(Long id);
 
     List<Maintenance> afficherMaintenancesParIdVehicule(Long idVehicule);
+
+    List<Maintenance> afficherMaintenancesParIdVehiculeJPQL(Long idVehicule);
+
 }

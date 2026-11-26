@@ -83,4 +83,15 @@ public class MaintenanceController {
             @Parameter(description = "Identifiant du véhicule") @PathVariable Long idVehicule) {
         return maintenanceMapper.toDtoList(maintenanceService.afficherMaintenancesParIdVehicule(idVehicule));
     }
+
+
+    @Operation(summary = "Maintenances par identifiant de véhicule (JPQL)")
+    @ApiResponse(responseCode = "200", description = "Liste des maintenances retournée")
+    @GetMapping("/vehicule/{idVehicule}/jpql")
+    public List<MaintenanceDTO> getMaintenancesParIdVehiculeJPQL(
+            @Parameter(description = "Identifiant du véhicule") @PathVariable Long idVehicule) {
+        return maintenanceMapper.toDtoList(maintenanceService.afficherMaintenancesParIdVehiculeJPQL(idVehicule));
+    }
+
+
 }

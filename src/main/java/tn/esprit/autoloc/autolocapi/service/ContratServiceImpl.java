@@ -86,9 +86,7 @@ public class ContratServiceImpl implements IContratService {
     @Override
     public List<Contrat> afficherContratsParIdVehicule(Long idVehicule) {
         List<Contrat> contrats = contratRepository.findByReservation_Vehicule_IdVehicule(idVehicule);
-        log.info("=== Liste des Contrats pour le Véhicule {} ===", idVehicule);
-        contrats.forEach(c -> log.info("Contrat: id={}, dateSignature={}, montantTotal={}, valide={}",
-                c.getIdContrat(), c.getDateSignature(), c.getMontantTotal(), c.isValide()));
+
         return contrats;
     }
 }

@@ -78,9 +78,14 @@ public class MaintenanceServiceImpl implements IMaintenanceService {
     @Override
     public List<Maintenance> afficherMaintenancesParIdVehicule(Long idVehicule) {
         List<Maintenance> maintenances = maintenanceRepository.findByVehicule_IdVehicule(idVehicule);
-        log.info("=== Liste des Maintenances pour le Véhicule {} ===", idVehicule);
-        maintenances.forEach(m -> log.info("Maintenance: id={}, description={}, dateDebut={}, dateFin={}",
-                m.getIdMaintenance(), m.getDescription(), m.getDateDebut(), m.getDateFin()));
+
         return maintenances;
     }
+
+
+    @Override
+    public List<Maintenance> afficherMaintenancesParIdVehiculeJPQL(Long idVehicule) {
+        return maintenanceRepository.findMaintenancesByIdVehicule(idVehicule);
+    }
+
 }

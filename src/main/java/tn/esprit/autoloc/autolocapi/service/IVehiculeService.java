@@ -25,4 +25,10 @@ public interface IVehiculeService {
     List<Vehicule> afficherVehiculesParIdContrat(Long idContrat);
 
     List<Vehicule> afficherVehiculesParIdMaintenance(Long idMaintenance);
+
+    List<Vehicule> afficherVehiculesParIdMaintenanceJPQL(Long idMaintenance);
+
+    List<Vehicule> afficherVehiculesParIdMaintenanceSQL(Long idMaintenance);
+
+
 }

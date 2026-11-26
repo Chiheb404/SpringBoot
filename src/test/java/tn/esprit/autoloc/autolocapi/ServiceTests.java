@@ -300,7 +300,7 @@ class ServiceTests {
         v.setIdVehicule(1L);
         v.setMarque("Renault");
 
-        when(vehiculeRepository.findByMaintenances_IdMaintenance(30L))
+        when(vehiculeRepository.findVehiculesByIdMaintenance(30L))
                 .thenReturn(List.of(v));
 
         List<Vehicule> result = vehiculeService.afficherVehiculesParIdMaintenance(30L);

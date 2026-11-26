@@ -107,18 +107,25 @@ public class VehiculeServiceImpl implements IVehiculeService {
     @Override
     public List<Vehicule> afficherVehiculesParIdContrat(Long idContrat) {
         List<Vehicule> vehicules = vehiculeRepository.findByReservations_Contrat_IdContrat(idContrat);
-        log.info("=== Liste des Véhicules pour le Contrat {} ===", idContrat);
-        vehicules.forEach(v -> log.info("Vehicule: id={}, immatriculation={}, marque={}, modele={}",
-                v.getIdVehicule(), v.getImmatriculation(), v.getMarque(), v.getModele()));
+
         return vehicules;
     }
 
     @Override
     public List<Vehicule> afficherVehiculesParIdMaintenance(Long idMaintenance) {
-        List<Vehicule> vehicules = vehiculeRepository.findByMaintenances_IdMaintenance(idMaintenance);
-        log.info("=== Liste des Véhicules pour la Maintenance {} ===", idMaintenance);
-        vehicules.forEach(v -> log.info("Vehicule: id={}, immatriculation={}, marque={}, modele={}",
-                v.getIdVehicule(), v.getImmatriculation(), v.getMarque(), v.getModele()));
+        List<Vehicule> vehicules = vehiculeRepository.findVehiculesByIdMaintenance(idMaintenance);
+
         return vehicules;
     }
+
+    @Override
+    public List<Vehicule> afficherVehiculesParIdMaintenanceJPQL(Long idMaintenance) {
+        return vehiculeRepository.findVehiculesByIdMaintenance(idMaintenance);
+    }
+
+    @Override
+    public List<Vehicule> afficherVehiculesParIdMaintenanceSQL(Long idMaintenance) {
+        return vehiculeRepository.findVehiculesByIdMaintenanceSQL(idMaintenance);
+    }
+
 }

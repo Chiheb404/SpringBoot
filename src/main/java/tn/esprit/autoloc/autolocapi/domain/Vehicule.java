@@ -38,8 +38,8 @@ public class Vehicule {
     @ManyToOne(fetch = FetchType.LAZY)
     private Agence agence;
 
-    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Maintenance> maintenances = new ArrayList<>();
+//    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+//    private List<Maintenance> maintenances = new ArrayList<>();
 
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
